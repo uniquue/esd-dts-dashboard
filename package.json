@@ -1,0 +1,1 @@
+{"name":"esd-dts-dashboard","version":"1.0.0","private":true,"engines":{"node":">=22"},"scripts":{"build":"node build.mjs"},"dependencies":{"exceljs":"4.4.0"}}
