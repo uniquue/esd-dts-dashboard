@@ -1,0 +1,1 @@
+module.exports=async(context,req)=>{const valid=require('./upload-auth.cjs')(req);context.res={status:valid?200:401,headers:{'Content-Type':'application/json','Cache-Control':'no-store'},body:{valid}};};
