@@ -8,3 +8,9 @@ writeFileSync('api/package.json',JSON.stringify({name:'esd-dts-api',version:'1.0
 writeFileSync('api/master/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put'],route:'master'},{type:'http',direction:'out',name:'res'}]}));
 
 copyFileSync('master-seed.json','api/master/master-seed.json');
+
+copyFileSync('upload-auth.cjs','api/master/upload-auth.cjs');
+mkdirSync('api/reports',{recursive:true});
+copyFileSync('reports-api.cjs','api/reports/index.js');
+for(const file of ['upload-auth.cjs','data.mjs','loa-map.mjs'])copyFileSync(file,'api/reports/'+file);
+writeFileSync('api/reports/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put'],route:'reports'},{type:'http',direction:'out',name:'res'}]}));
