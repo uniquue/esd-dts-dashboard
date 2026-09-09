@@ -6,3 +6,5 @@ mkdirSync('api/master',{recursive:true});copyFileSync('master-api.cjs','api/mast
 writeFileSync('api/host.json',JSON.stringify({version:'2.0'}));
 writeFileSync('api/package.json',JSON.stringify({name:'esd-dts-api',version:'1.0.0',private:true,dependencies:{'@azure/storage-blob':'12.28.0'}}));
 writeFileSync('api/master/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put'],route:'master'},{type:'http',direction:'out',name:'res'}]}));
+
+copyFileSync('master-seed.json','api/master/master-seed.json');

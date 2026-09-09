@@ -5,7 +5,7 @@ module.exports=async function(context,req){
   const connection=process.env.MASTER_STORAGE_CONNECTION_STRING;if(!connection){context.res={status:503,headers,body:{error:'Shared master storage is not configured.'}};return;}
   const container=BlobServiceClient.fromConnectionString(connection).getContainerClient('esd-dts-master');
   const blob=container.getBlockBlobClient('master.json');
-  if(req.method==='GET'){try{const result=await blob.downloadToBuffer();context.res={status:200,headers,body:JSON.parse(result.toString())};}catch(e){if(e.statusCode!==404)throw e;context.res={status:200,headers,body:{rows:[],updatedAt:null}};}return;}
+  if(req.method==='GET'){try{const result=await blob.downloadToBuffer();context.res={status:200,headers,body:JSON.parse(result.toString())};}catch(e){if(e.statusCode!==404)throw e;const seed=require('./master-seed.json');await container.createIfNotExists();try{await blob.uploadData(Buffer.from(JSON.stringify(seed)),{conditions:{ifNoneMatch:'*'},blobHTTPHeaders:{blobContentType:'application/json'}});}catch(seedError){if(seedError.statusCode!==409&&seedError.statusCode!==412)throw seedError;}const current=await blob.downloadToBuffer();context.res={status:200,headers,body:JSON.parse(current.toString())};}return;}
   let principal;try{principal=JSON.parse(Buffer.from(req.headers['x-ms-client-principal']||'','base64').toString());}catch{}
   if(!principal?.userRoles?.includes('authenticated')){context.res={status:401,headers,body:{error:'Sign in to replace the master.'}};return;}
   const rows=req.body?.rows;if(!Array.isArray(rows)||!rows.length||rows.length>100)throw Error('Supply between 1 and 100 master budget rows.');
