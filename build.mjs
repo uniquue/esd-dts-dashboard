@@ -1,6 +1,6 @@
 import {mkdirSync,copyFileSync,writeFileSync} from 'node:fs';
 mkdirSync('dist',{recursive:true});
-for(const name of ['index.html','style.css','app.mjs','data.mjs','loa-map.mjs','staticwebapp.config.json'])copyFileSync(name,'dist/'+name);
+for(const name of ['esd-logo.png','splash.js','index.html','style.css','app.mjs','data.mjs','loa-map.mjs','staticwebapp.config.json'])copyFileSync(name,'dist/'+name);
 copyFileSync('node_modules/exceljs/dist/exceljs.min.js','dist/exceljs.min.js');
 mkdirSync('api/master',{recursive:true});copyFileSync('master-api.cjs','api/master/index.js');
 writeFileSync('api/host.json',JSON.stringify({version:'2.0'}));
