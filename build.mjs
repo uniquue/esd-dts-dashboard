@@ -19,4 +19,4 @@ mkdirSync('api/loas',{recursive:true});copyFileSync('loas-api.cjs','api/loas/ind
 for(const file of ['upload-auth.cjs','data.mjs','loa-map.mjs'])copyFileSync(file,'api/loas/'+file);
 writeFileSync('api/loas/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put'],route:'loas'},{type:'http',direction:'out',name:'res'}]}));
 
-mkdirSync('api/admin',{recursive:true});copyFileSync('admin-api.cjs','api/admin/index.js');copyFileSync('upload-auth.cjs','api/admin/upload-auth.cjs');writeFileSync('api/admin/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['post'],route:'admin'},{type:'http',direction:'out',name:'res'}]}));
+mkdirSync('api/verifyUpload',{recursive:true});copyFileSync('admin-api.cjs','api/verifyUpload/index.js');copyFileSync('upload-auth.cjs','api/verifyUpload/upload-auth.cjs');writeFileSync('api/verifyUpload/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['post'],route:'verify-upload'},{type:'http',direction:'out',name:'res'}]}));

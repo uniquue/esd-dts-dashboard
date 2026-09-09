@@ -52,7 +52,7 @@ $('publish-loas').addEventListener('click',async()=>{const button=$('publish-loa
 let adminAttempt=0;
 function hideAdmin(){adminAttempt++;document.querySelectorAll('.admin-only').forEach(card=>card.hidden=true);$('admin-status').textContent='';}
 $('upload-password').addEventListener('input',hideAdmin);
-async function unlockAdmin(){const attempt=++adminAttempt;const entered=password();if(!entered){$('admin-status').textContent='Enter the admin password.';return;}try{const r=await fetch('/api/admin',{method:'POST',headers:{'x-upload-password':entered}});if(attempt!==adminAttempt)return;if(!r.ok)throw Error(r.status===401?'Incorrect admin password.':'Unable to verify password. Try again.');document.querySelectorAll('.admin-only').forEach(card=>card.hidden=false);$('admin-status').textContent='Admin controls unlocked.';}catch(e){if(attempt===adminAttempt)$('admin-status').textContent=e.message;}}
+async function unlockAdmin(){const attempt=++adminAttempt;const entered=password();if(!entered){$('admin-status').textContent='Enter the admin password.';return;}try{const r=await fetch('/api/verify-upload',{method:'POST',headers:{'x-upload-password':entered}});if(attempt!==adminAttempt)return;if(!r.ok)throw Error(r.status===401?'Incorrect admin password.':'Unable to verify password. Try again.');document.querySelectorAll('.admin-only').forEach(card=>card.hidden=false);$('admin-status').textContent='Admin controls unlocked.';}catch(e){if(attempt===adminAttempt)$('admin-status').textContent=e.message;}}
 $('unlock-admin').addEventListener('click',unlockAdmin);
 $('upload-password').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();unlockAdmin();}});
 $('upload-password').addEventListener('change',unlockAdmin);
