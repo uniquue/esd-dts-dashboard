@@ -21,7 +21,7 @@ module.exports=async(context,req)=>{
   }
   if(typeof text!=='string'||!text.length||Buffer.byteLength(text)>10000000)return respond(400,{error:'Upload a CSV file up to 10 MB.'});
   if(typeof filename!=='string'||filename.length>250)return respond(400,{error:'Invalid filename.'});
-  const parsed=parseReport(text,kind,agency,group);const saved={...parsed,agency,group,kind,filename,updatedAt:new Date().toISOString(),sourceText:text};
+  let mapping;try{mapping=JSON.parse((await container.getBlockBlobClient('loa-reference.json').downloadToBuffer()).toString()).mapping;}catch(e){if(e.statusCode!==404)throw e;}const parsed=parseReport(text,kind,agency,group,mapping);const saved={...parsed,agency,group,kind,filename,updatedAt:new Date().toISOString(),sourceText:text};
   await container.createIfNotExists();const name='reports/'+Buffer.from(agency+'|'+group+'|'+kind).toString('hex')+'.json';
   await container.getBlockBlobClient(name).uploadData(Buffer.from(JSON.stringify(saved)),{blobHTTPHeaders:{blobContentType:'application/json'}});
   const {sourceText,...report}=saved;return respond(200,{report});

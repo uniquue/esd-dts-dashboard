@@ -14,3 +14,7 @@ mkdirSync('api/reports',{recursive:true});
 copyFileSync('reports-api.cjs','api/reports/index.js');
 for(const file of ['upload-auth.cjs','data.mjs','loa-map.mjs'])copyFileSync(file,'api/reports/'+file);
 writeFileSync('api/reports/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put','delete'],route:'reports'},{type:'http',direction:'out',name:'res'}]}));
+
+mkdirSync('api/loas',{recursive:true});copyFileSync('loas-api.cjs','api/loas/index.js');
+for(const file of ['upload-auth.cjs','data.mjs','loa-map.mjs'])copyFileSync(file,'api/loas/'+file);
+writeFileSync('api/loas/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put'],route:'loas'},{type:'http',direction:'out',name:'res'}]}));
