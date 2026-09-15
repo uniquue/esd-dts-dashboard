@@ -1,6 +1,6 @@
 import loaMap from './loa-map.mjs';
-export const agencies={'ASA(FM&C)':['Front Office','ABO','CE','FOI','FIARs (FOI)','AAFES'],'G-8':['HQs','CD','EMD','PA&E','FA49 (PAED)']};
-export const canonical=s=>({'PAED':'PA&E','FIARS (FOI)':'FIARs (FOI)','HQ':'HQs','HQS':'HQs'}[String(s).trim()]||String(s).trim());
+export const agencies={'ASA(FM&C)':['Front Office','ABO','CE','FOI','FIARs (FOI)','AAFES'],'G-8':['HQs','CD','EMD','PA&E','PAED - (FA49)']};
+export const canonical=s=>({'PAED':'PA&E','FIARS (FOI)':'FIARs (FOI)','HQ':'HQs','HQS':'HQs','FA49 (PAED)':'PAED - (FA49)','PAED - (FA49)':'PAED - (FA49)'}[String(s).trim()]||String(s).trim());
 export function csv(text){const rows=[];let row=[],value='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}else if(c===','&&!quoted){row.push(value);value='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(value);rows.push(row);row=[];value='';}else value+=c;}if(value||row.length){row.push(value);rows.push(row);}if(quoted)throw Error('CSV contains an unclosed quoted field.');return rows;}
 export function amount(value){let s=String(value??'').trim();if(!s||s==='-')return 0;const negative=s.startsWith('(');s=s.replace(/[$,()\s]/g,'');const n=Number(s);if(!Number.isFinite(n))throw Error('Invalid monetary value: '+value);return Math.round(n*(negative?-1:1)*100);}
 export function parseReport(text,kind,agency,group,mapping=loaMap){const rows=csv(text.replace(/^\uFEFF/,'')),out=[];let header=null;const keys=new Set();let duplicates=0,found=false;
