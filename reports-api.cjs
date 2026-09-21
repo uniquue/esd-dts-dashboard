@@ -12,7 +12,7 @@ module.exports=async(context,req)=>{
   if(!require('./upload-auth.cjs')(req))return respond(401,{error:'Enter the correct master upload password.'});
   const {agencies,parseReport}=await import('./data.mjs');
   const {agency,group,kind,text,filename}=req.body||{};
-  if(!agencies[agency]?.includes(group)||!['travel','voucher'].includes(kind))return respond(400,{error:'Invalid agency, group or report type.'});
+  if(!agencies[agency]||typeof group!=='string'||!group.trim()||group.length>80||!['travel','voucher'].includes(kind))return respond(400,{error:'Invalid agency, group or report type.'});
   if(req.method==='DELETE'){
    if(kind!=='voucher')return respond(400,{error:'Only unsubmitted-voucher files can be removed.'});
    const name='reports/'+Buffer.from(agency+'|'+group+'|'+kind).toString('hex')+'.json';const blob=container.getBlockBlobClient(name);
