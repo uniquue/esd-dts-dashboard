@@ -20,3 +20,5 @@ for(const file of ['upload-auth.cjs','data.mjs','loa-map.mjs'])copyFileSync(file
 writeFileSync('api/loas/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put'],route:'loas'},{type:'http',direction:'out',name:'res'}]}));
 
 mkdirSync('api/verifyUpload',{recursive:true});copyFileSync('admin-api.cjs','api/verifyUpload/index.js');copyFileSync('upload-auth.cjs','api/verifyUpload/upload-auth.cjs');writeFileSync('api/verifyUpload/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['post'],route:'verify-upload'},{type:'http',direction:'out',name:'res'}]}));
+
+mkdirSync('api/fundingReceived',{recursive:true});copyFileSync('funding-api.cjs','api/fundingReceived/index.js');copyFileSync('upload-auth.cjs','api/fundingReceived/upload-auth.cjs');writeFileSync('api/fundingReceived/function.json',JSON.stringify({bindings:[{authLevel:'anonymous',type:'httpTrigger',direction:'in',name:'req',methods:['get','put','delete'],route:'funding-received'},{type:'http',direction:'out',name:'res'}]}));
