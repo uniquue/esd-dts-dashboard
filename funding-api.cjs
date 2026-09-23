@@ -5,8 +5,9 @@ module.exports=async function(context,req){
   const connection=process.env.MASTER_STORAGE_CONNECTION_STRING;
   if(!connection){context.res={status:503,headers,body:{error:'Shared funding storage is not configured.'}};return;}
   const container=BlobServiceClient.fromConnectionString(connection).getContainerClient('esd-dts-master');
-  const blob=container.getBlockBlobClient('funding-received.json');
-  const read=async()=>{try{return JSON.parse((await blob.downloadToBuffer()).toString());}catch(e){if(e.statusCode===404)return {entries:[],updatedAt:null};throw e;}};
+  const fy=String(req.query?.fy||'FY26').toUpperCase();if(!/^FY(2[5-9]|30)$/.test(fy))throw Error('Invalid fiscal year.');
+  const blob=container.getBlockBlobClient('funding-received-'+fy+'.json');
+  const read=async()=>{try{return JSON.parse((await blob.downloadToBuffer()).toString());}catch(e){if(e.statusCode!==404)throw e;if(fy==='FY26'){try{return JSON.parse((await container.getBlockBlobClient('funding-received.json').downloadToBuffer()).toString());}catch(legacyError){if(legacyError.statusCode!==404)throw legacyError;}}return {entries:[],updatedAt:null,fiscalYear:fy};}};
   if(req.method==='GET'){context.res={status:200,headers,body:await read()};return;}
   if(!require('./upload-auth.cjs')(req)){context.res={status:401,headers,body:{error:'Enter the correct admin password.'}};return;}
   const current=await read();
@@ -23,6 +24,6 @@ module.exports=async function(context,req){
   }
   await container.createIfNotExists();
   await blob.uploadData(Buffer.from(JSON.stringify(current)),{blobHTTPHeaders:{blobContentType:'application/json'}});
-  context.res={status:200,headers,body:current};
+  current.fiscalYear=fy;context.res={status:200,headers,body:current};
  }catch(e){context.res={status:e.statusCode?503:400,headers,body:{error:e.statusCode?'Shared storage is temporarily unavailable.':e.message}};}
 };
