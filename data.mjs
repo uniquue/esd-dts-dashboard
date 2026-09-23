@@ -1,5 +1,10 @@
 import loaMap from './loa-map.mjs';
 export const agencies={'ASA(FM&C)':['Front Office','ABO','CE','FOI','FIARs (FOI)','AAFES'],'G-8':['HQs','CD','EMD','PA&E','FA49 (PA&E)']};
+// FY25 predates CD and EMD. Preserve FD as the historical directorate name.
+export function groupsForFiscalYear(agency,fiscalYear,master=[]){
+ if(agency==='G-8'&&fiscalYear==='FY25')return ['HQs','FD','PA&E','FA49 (PA&E)'];
+ return [...new Set([...(agencies[agency]||[]),...master.filter(row=>row.agency===agency&&(agency==='G-8'||!/^HQs?$/i.test(row.group))).map(row=>row.group)])];
+}
 export const canonical=s=>{const raw=String(s??'').trim(),key=raw.toUpperCase().replace(/\s+/g,' '),compact=key.replace(/\s*\(\s*/g,'(').replace(/\s*\)\s*/g,')');return {'PAED':'PA&E','FIAR':'FIARs (FOI)','FIARS':'FIARs (FOI)','FIAR(FOI)':'FIARs (FOI)','FIARS(FOI)':'FIARs (FOI)','FIAR/FOI':'FIARs (FOI)','FIARS/FOI':'FIARs (FOI)','HQ':'HQs','HQS':'HQs','FA49(PAED)':'FA49 (PA&E)','FA49(PA&E)':'FA49 (PA&E)','PAED-(FA49)':'FA49 (PA&E)','PAED -(FA49)':'FA49 (PA&E)'}[compact]||raw};
 export function csv(text){const rows=[];let row=[],value='',quoted=false;for(let i=0;i<text.length;i++){const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}else if(c===','&&!quoted){row.push(value);value='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(value);rows.push(row);row=[];value='';}else value+=c;}if(value||row.length){row.push(value);rows.push(row);}if(quoted)throw Error('CSV contains an unclosed quoted field.');return rows;}
 export function amount(value){let s=String(value??'').trim();if(!s||s==='-')return 0;const negative=s.startsWith('(');s=s.replace(/[$,()\s]/g,'');const n=Number(s);if(!Number.isFinite(n))throw Error('Invalid monetary value: '+value);return Math.round(n*(negative?-1:1)*100);}
