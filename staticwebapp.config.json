@@ -1,1 +1,45 @@
-{"routes": [{"route": "/api/master", "allowedRoles": ["anonymous"]}, {"route": "/api/reports", "allowedRoles": ["anonymous"]}], "platform": {"apiRuntime": "node:20"}, "globalHeaders": {"X-Content-Type-Options": "nosniff", "Referrer-Policy": "same-origin", "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"}}
+{
+  "routes": [
+    {
+      "route": "/.auth/*",
+      "allowedRoles": [
+        "anonymous",
+        "authenticated"
+      ]
+    },
+    {
+      "route": "/api/master",
+      "allowedRoles": [
+        "esd_approved"
+      ]
+    },
+    {
+      "route": "/api/reports",
+      "allowedRoles": [
+        "esd_approved"
+      ]
+    },
+    {
+      "route": "/*",
+      "allowedRoles": [
+        "esd_approved"
+      ]
+    }
+  ],
+  "platform": {
+    "apiRuntime": "node:20"
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "same-origin",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+    "Cache-Control": "no-store",
+    "X-Robots-Tag": "noindex, nofollow, noarchive"
+  },
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/.auth/login/aad?post_login_redirect_uri=/"
+    }
+  }
+}
